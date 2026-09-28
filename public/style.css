@@ -371,7 +371,6 @@ main { width: 100%; max-width: 720px; flex: 1; }
 }
 .grade:hover { }
 .grade:active { }
-.grade svg { flex-shrink: 0; width: 18px; height: 18px; }
 .grade span { white-space: nowrap; }
 
 .g0 { color: var(--error); }
@@ -641,7 +640,6 @@ button.primary:hover { background: var(--accent); border-color: var(--accent); }
   .front { font-size: 22px; padding: 16px 0 20px; }
   .grades { gap: 8px; }
   .grade { padding: 10px 12px; min-height: 44px; gap: 6px; }
-  .grade svg { width: 16px; height: 16px; }
   .grade span { font-size: 12px; }
 }
 
