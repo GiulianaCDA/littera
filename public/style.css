@@ -6,10 +6,11 @@
   --line:      #26262e;
   --text:      #e8e8ec;
   --muted:     #8b8b96;
-  --accent:    #a0a0a0;
-  --red:       #9a9a9a;
-  --amber:     #949494;
-  --blue:      #8a8a8a;
+  --accent:    #a3e635;
+  --success:   #10b981;
+  --error:     #ef4444;
+  --warning:   #f59e0b;
+  --info:      #3b82f6;
   --radius:    14px;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
 
@@ -98,8 +99,8 @@ nav { display: flex; gap: 2px; margin-right: auto; }
 
 /* Badges com estado */
 #b-due { color: var(--text); border-color: var(--muted); }
-#b-due.warm { color: var(--amber); border-color: var(--amber); background: #241f14; }
-#b-due.hot { color: var(--red); border-color: var(--red); background: #241618; font-weight: 600; }
+#b-due.warm { color: var(--warning); border-color: var(--warning); background: var(--surface-2); font-weight: 600; }
+#b-due.hot { color: var(--error); border-color: var(--error); background: var(--surface-2); font-weight: 700; }
 
 /* ---------- layout ---------- */
 main { width: 100%; max-width: 720px; flex: 1; }
@@ -176,7 +177,7 @@ main { width: 100%; max-width: 720px; flex: 1; }
 .practice-form label { color: var(--muted); font-size: 13px; }
 .practice-input-group { display: flex; align-items: flex-end; gap: 8px; }
 .practice-form input:not([type=search]) { flex: 1; padding: 12px 0 10px; background: transparent; border: 0; border-bottom: 1px solid #55555f; border-radius: 0; color: var(--text); font: inherit; font-size: 16px; box-shadow: none; }
-.practice-form input:not([type=search]):focus { outline: none; border: 0; border-bottom: 1px solid #8b8b96; box-shadow: none; }
+.practice-form input:not([type=search]):focus { outline: none; border: 0; border-bottom: 1px solid var(--accent); box-shadow: none; }
 .practice-submit-btn {
   display: grid;
   place-items: center;
@@ -209,16 +210,16 @@ main { width: 100%; max-width: 720px; flex: 1; }
   animation: slideIn .3s ease;
   border-left: 3px solid var(--line);
 }
-.practice-result.correct { border-color: var(--accent); border-left-color: var(--accent); background: #1a2214; }
-.practice-result.incorrect { border-color: var(--amber); border-left-color: var(--amber); background: #241f14; }
+.practice-result.correct { border-color: var(--success); border-left-color: var(--success); background: #0f2214; }
+.practice-result.incorrect { border-color: var(--warning); border-left-color: var(--warning); background: #241f14; }
 
 .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .result-icon { font-size: 18px; flex-shrink: 0; font-weight: 700; }
 .practice-result.correct .result-icon { color: var(--accent); }
-.practice-result.incorrect .result-icon { color: var(--amber); }
+.practice-result.incorrect .result-icon { color: var(--warning); }
 .practice-result strong { font-weight: 600; font-size: 14px; }
-.practice-result.correct strong { color: var(--accent); }
-.practice-result.incorrect strong { color: var(--amber); }
+.practice-result.correct strong { color: var(--success); }
+.practice-result.incorrect strong { color: var(--warning); }
 .practice-result p { margin-top: 8px; font-size: 13px; color: var(--muted); }
 .practice-result #result-level { color: var(--text); font-weight: 500; margin: 8px 0 0; }
 .practice-result .correction { color: var(--text); font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -269,24 +270,24 @@ main { width: 100%; max-width: 720px; flex: 1; }
 .grade svg { flex-shrink: 0; width: 18px; height: 18px; }
 .grade span { white-space: nowrap; }
 
-.g0 { color: var(--red); }
-.g0:hover { border-color: var(--red); background: #241618; }
+.g0 { color: var(--error); }
+.g0:hover { border-color: var(--error); background: #1f1714; }
 
-.g1 { color: var(--amber); }
-.g1:hover { border-color: var(--amber); background: #241f14; }
+.g1 { color: var(--warning); }
+.g1:hover { border-color: var(--warning); background: #241f14; }
 
 .g2 { color: var(--accent); }
-.g2:hover { border-color: var(--accent); background: #1a2214; }
+.g2:hover { border-color: var(--accent); background: #1a2414; }
 
-.g3 { color: var(--blue); }
-.g3:hover { border-color: var(--blue); background: #14202a; }
+.g3 { color: var(--info); }
+.g3:hover { border-color: var(--info); background: #151a2a; }
 
 kbd {
   position: absolute;
   top: 5px;
   right: 6px;
   font: 9px/1 var(--mono);
-  color: #5a5a66;
+  color: #8b8b96;
 }
 .reveal kbd { position: static; font-size: 11px; color: var(--muted); }
 
@@ -342,7 +343,7 @@ kbd {
   font-size: 14px;
   transition: background .15s, border-color .15s;
 }
-#search::placeholder { color: #5a5a66; }
+#search::placeholder { color: #7dd3fc; }
 #search:focus { outline: none; border-color: var(--accent); background: var(--surface-2); }
 
 .list { display: flex; flex-direction: column; gap: 6px; }
@@ -380,7 +381,7 @@ kbd {
   align-items: center;
   justify-content: center;
 }
-.icon-btn:hover { color: var(--red); background: #241618; }
+.icon-btn:hover { color: var(--error); background: #1f1714; }
 
 /* ---------- formulários ---------- */
 .panel {
@@ -403,7 +404,7 @@ label {
   font-size: 13px;
   color: var(--muted);
 }
-.req { color: var(--red); }
+.req { color: var(--error); }
 
 input:not([type=search]), textarea {
   padding: 11px 13px;
@@ -416,7 +417,7 @@ input:not([type=search]), textarea {
   resize: vertical;
 }
 textarea { font-family: var(--mono); font-size: 13px; line-height: 1.7; }
-input::placeholder, textarea::placeholder { color: #4d4d57; }
+input::placeholder, textarea::placeholder { color: #7dd3fc; }
 input:focus, textarea:focus { outline: none; border-color: #3a3a48; }
 
 code {
@@ -424,7 +425,7 @@ code {
   background: var(--surface-2);
   padding: 2px 5px;
   border-radius: 4px;
-  color: var(--blue);
+  color: var(--info);
 }
 
 button.primary, .panel button {
@@ -446,7 +447,7 @@ button.primary {
   color: #0b0b0d;
   font-weight: 500;
 }
-button.primary:hover { background: #b3f04a; border-color: #b3f04a; }
+button.primary:hover { background: var(--accent); border-color: var(--accent); }
 
 /* ---------- pronúncia ---------- */
 .pron {
@@ -499,7 +500,7 @@ button.primary:hover { background: #b3f04a; border-color: #b3f04a; }
 .toolbar button:hover:not(:disabled) { color: var(--text); border-color: #3a3a48; }
 .toolbar button:disabled { opacity: .5; cursor: progress; }
 
-.row-ipa { font: 11px/1 var(--mono); color: #5f5f6b; margin-top: 3px; }
+.row-ipa { font: 11px/1 var(--mono); color: var(--muted); margin-top: 3px; }
 .row-ipa:empty { display: none; }
 
 /* ---------- toast ---------- */
