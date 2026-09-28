@@ -201,12 +201,10 @@ main { width: 100%; max-width: 720px; flex: 1; }
 /* Practice input feedback states (Duolingo-style) */
 .practice-input-group.correct #practice-input {
   border-bottom-color: var(--success);
-  background: rgba(16, 185, 129, 0.05);
 }
 
 .practice-input-group.incorrect #practice-input {
   border-bottom-color: var(--error);
-  background: rgba(239, 68, 68, 0.05);
 }
 
 .practice-feedback-icon {
@@ -214,7 +212,7 @@ main { width: 100%; max-width: 720px; flex: 1; }
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  animation: popIn .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: fadeInIcon .25s ease-out;
 }
 
 .practice-feedback-icon.correct {
@@ -227,36 +225,36 @@ main { width: 100%; max-width: 720px; flex: 1; }
   color: var(--error);
 }
 
-@keyframes popIn {
-  0% { transform: scale(0.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes fadeInIcon {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @media (max-width: 380px) {
   .practice-submit-btn { width: 36px; height: 36px; }
 }
 .practice-result {
-  margin-top: 18px;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface-2);
-  animation: slideIn .3s ease;
-  border-left: 3px solid var(--line);
+  margin-top: 24px;
+  padding: 16px 0;
+  border: none;
+  border-bottom: 2px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  animation: none;
 }
-.practice-result.correct { border-color: var(--success); border-left-color: var(--success); background: #0f2214; }
-.practice-result.incorrect { border-color: var(--warning); border-left-color: var(--warning); background: #241f14; }
+.practice-result.correct { border-color: var(--success); border-left-color: var(--success); }
+.practice-result.incorrect { border-color: var(--warning); border-left-color: var(--warning); }
 
-.result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.result-icon { font-size: 18px; flex-shrink: 0; font-weight: 700; }
-.practice-result.correct .result-icon { color: var(--accent); }
+.result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.result-icon { font-size: 16px; flex-shrink: 0; font-weight: 500; }
+.practice-result.correct .result-icon { color: var(--success); }
 .practice-result.incorrect .result-icon { color: var(--warning); }
-.practice-result strong { font-weight: 600; font-size: 14px; }
-.practice-result.correct strong { color: var(--success); }
-.practice-result.incorrect strong { color: var(--warning); }
-.practice-result p { margin-top: 8px; font-size: 13px; color: var(--muted); }
-.practice-result #result-level { color: var(--text); font-weight: 500; margin: 8px 0 0; }
-.practice-result .correction { color: var(--text); font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.practice-result strong { font-weight: 500; font-size: 14px; }
+.practice-result.correct strong { color: var(--text); }
+.practice-result.incorrect strong { color: var(--text); }
+.practice-result p { margin-top: 6px; font-size: 13px; color: var(--muted); }
+.practice-result #result-level { color: var(--muted); font-weight: 400; margin: 10px 0 0; font-size: 12px; }
+.practice-result .correction { color: var(--text); font-size: 13px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
 
 /* Strikethrough animation for incorrect feedback */
 .strikethrough-word {
@@ -273,7 +271,7 @@ main { width: 100%; max-width: 720px; flex: 1; }
   height: 1px;
   background: var(--error);
   transform: translateY(-50%);
-  animation: drawStrike .45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: drawStrike .3s ease-out forwards;
 }
 
 @keyframes drawStrike {
@@ -283,10 +281,10 @@ main { width: 100%; max-width: 720px; flex: 1; }
 
 .correction-text {
   opacity: 0;
-  animation: fadeInSuggest .4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: .35s;
+  animation: fadeInSuggest .25s ease-out forwards;
+  animation-delay: .25s;
   color: var(--success);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 @keyframes fadeInSuggest {
