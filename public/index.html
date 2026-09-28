@@ -96,12 +96,19 @@
         </div>
       </form>
       <div id="practice-result" class="practice-result hidden" aria-live="polite">
-        <div class="result-header">
-          <span id="result-icon" class="result-icon"></span>
-          <strong id="result-status"></strong>
+        <div id="practice-loading" class="loading-dots">
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
         </div>
-        <p id="result-level"></p>
-        <p id="result-correction" class="correction hidden"></p>
+        <div id="practice-feedback" class="hidden">
+          <div class="result-header">
+            <span id="result-icon" class="result-icon"></span>
+            <strong id="result-status"></strong>
+          </div>
+          <p id="result-level"></p>
+          <p id="result-correction" class="correction hidden"></p>
+        </div>
       </div>
       <button id="practice-next" class="reveal hidden" type="button">Próxima palavra</button>
     </div>

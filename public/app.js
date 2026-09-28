@@ -203,7 +203,8 @@ function showPracticeCard() {
   $('#practice-count').textContent = `${practiceIndex} / ${practiceCards.length}`;
   $('#practice-input').value = '';
   $('#practice-result').className = 'practice-result hidden';
-  $('#practice-result').textContent = '';
+  $('#practice-loading').classList.remove('hidden');
+  $('#practice-feedback').classList.add('hidden');
   $('#practice-next').classList.add('hidden');
   $('#practice-submit').classList.remove('hidden');
   $('#practice-input').disabled = false;
@@ -216,8 +217,15 @@ $('#practice-form').addEventListener('submit', async (e) => {
   const input = $('#practice-input');
   const button = $('#practice-submit');
   const result = $('#practice-result');
+  const loading = $('#practice-loading');
+  const feedback = $('#practice-feedback');
+
   button.disabled = true;
   button.classList.add('loading');
+  result.classList.remove('hidden');
+  loading.classList.remove('hidden');
+  feedback.classList.add('hidden');
+
   try {
     const review = await api('/api/practice/evaluate', {
       method: 'POST',
@@ -226,7 +234,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
     result.className = `practice-result ${review.correct ? 'correct' : 'incorrect'}`;
 
     const icon = $('#result-icon');
-    const status = result.querySelector('strong');
+    const status = feedback.querySelector('strong');
     const level = $('#result-level');
     const correction = $('#result-correction');
 
@@ -270,11 +278,16 @@ $('#practice-form').addEventListener('submit', async (e) => {
       correction.classList.add('hidden');
     }
 
-    result.classList.remove('hidden');
+    // Hide loading, show feedback
+    loading.classList.add('hidden');
+    feedback.classList.remove('hidden');
     button.classList.add('hidden');
     $('#practice-next').classList.remove('hidden');
   } catch (err) {
     toast(err.message);
+    result.classList.add('hidden');
+    loading.classList.add('hidden');
+    feedback.classList.add('hidden');
   } finally {
     button.disabled = false;
     button.classList.remove('loading');
