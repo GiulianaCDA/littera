@@ -285,7 +285,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
     result.className = `practice-result ${review.correct ? 'correct' : 'incorrect'}`;
 
     const icon = $('#result-icon');
-    const status = feedback.querySelector('strong');
+    const status = $('#result-status');
     const level = $('#result-level');
     const correction = $('#result-correction');
 
