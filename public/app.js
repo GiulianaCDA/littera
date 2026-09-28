@@ -219,12 +219,18 @@ $('#practice-form').addEventListener('submit', async (e) => {
   const result = $('#practice-result');
   const loading = $('#practice-loading');
   const feedback = $('#practice-feedback');
+  const errorDiv = $('#practice-error');
 
   button.disabled = true;
   button.classList.add('loading');
   result.classList.remove('hidden');
+  result.className = 'practice-result'; // Reset class
   loading.classList.remove('hidden');
   feedback.classList.add('hidden');
+  errorDiv.classList.add('hidden');
+  errorDiv.textContent = '';
+  $('#practice-next').classList.add('hidden');
+  $('#practice-skip').classList.add('hidden');
 
   try {
     const review = await api('/api/practice/evaluate', {
@@ -283,17 +289,21 @@ $('#practice-form').addEventListener('submit', async (e) => {
     feedback.classList.remove('hidden');
     button.classList.add('hidden');
     $('#practice-next').classList.remove('hidden');
+    $('#practice-skip').classList.remove('hidden');
   } catch (err) {
-    toast(err.message);
-    result.classList.add('hidden');
     loading.classList.add('hidden');
+    errorDiv.classList.remove('hidden');
+    errorDiv.textContent = `Erro: ${err.message}`;
+    result.className = 'practice-result incorrect';
     feedback.classList.add('hidden');
+    $('#practice-skip').classList.remove('hidden');
   } finally {
     button.disabled = false;
     button.classList.remove('loading');
   }
 });
 $('#practice-next').addEventListener('click', showPracticeCard);
+$('#practice-skip').addEventListener('click', showPracticeCard);
 
 document.addEventListener('keydown', (e) => {
   if (view !== 'study' || e.target.matches('input, textarea')) return;

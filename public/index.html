@@ -96,11 +96,13 @@
         </div>
       </form>
       <div id="practice-result" class="practice-result hidden" aria-live="polite">
-        <div id="practice-loading" class="loading-dots">
+        <div id="practice-loading" class="loading-dots hidden">
           <span class="loading-dot"></span>
           <span class="loading-dot"></span>
           <span class="loading-dot"></span>
+          <span style="margin-left: 8px; color: var(--muted);">Avaliando...</span>
         </div>
+        <div id="practice-error" class="hidden" style="color: var(--error); margin-top: 12px;"></div>
         <div id="practice-feedback" class="hidden">
           <div class="result-header">
             <span id="result-icon" class="result-icon"></span>
@@ -110,7 +112,10 @@
           <p id="result-correction" class="correction hidden"></p>
         </div>
       </div>
-      <button id="practice-next" class="reveal hidden" type="button">Próxima palavra</button>
+      <div style="display: flex; gap: 10px; margin-top: 18px;">
+        <button id="practice-next" class="reveal hidden" type="button">Próxima palavra</button>
+        <button id="practice-skip" class="reveal hidden" type="button" title="Pular este termo (tecla S)">Pular</button>
+      </div>
     </div>
     <div id="practice-empty" class="empty hidden"><h2>Nenhum cartão disponível</h2><p>Adicione cartões para começar a praticar.</p></div>
   </section>
