@@ -343,7 +343,7 @@ kbd {
   font-size: 14px;
   transition: background .15s, border-color .15s;
 }
-#search::placeholder { color: #7dd3fc; }
+#search::placeholder { color: #9a9aaa; }
 #search:focus { outline: none; border-color: var(--accent); background: var(--surface-2); }
 
 .list { display: flex; flex-direction: column; gap: 6px; }
@@ -417,7 +417,7 @@ input:not([type=search]), textarea {
   resize: vertical;
 }
 textarea { font-family: var(--mono); font-size: 13px; line-height: 1.7; }
-input::placeholder, textarea::placeholder { color: #7dd3fc; }
+input::placeholder, textarea::placeholder { color: #9a9aaa; }
 input:focus, textarea:focus { outline: none; border-color: #3a3a48; }
 
 code {
