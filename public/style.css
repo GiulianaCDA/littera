@@ -6,10 +6,10 @@
   --line:      #26262e;
   --text:      #e8e8ec;
   --muted:     #8b8b96;
-  --accent:    #a3e635;
-  --red:       #f87171;
-  --amber:     #fbbf24;
-  --blue:      #7dd3fc;
+  --accent:    #a0a0a0;
+  --red:       #9a9a9a;
+  --amber:     #949494;
+  --blue:      #8a8a8a;
   --radius:    14px;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
 
@@ -107,8 +107,7 @@ main { width: 100%; max-width: 720px; flex: 1; }
 .view.active { display: block; animation: fade .2s ease; }
 .hidden { display: none !important; }
 
-@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
 .muted { color: var(--muted); font-size: 12px; font-weight: 500; }
 
@@ -265,8 +264,8 @@ main { width: 100%; max-width: 720px; flex: 1; }
   transition: background .15s, border-color .15s, color .15s, transform .1s;
   min-height: 48px;
 }
-.grade:hover { transform: translateY(-2px); }
-.grade:active { transform: translateY(0); }
+.grade:hover { }
+.grade:active { }
 .grade svg { flex-shrink: 0; width: 18px; height: 18px; }
 .grade span { white-space: nowrap; }
 
