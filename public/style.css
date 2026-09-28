@@ -224,6 +224,49 @@ main { width: 100%; max-width: 720px; flex: 1; }
 .practice-result #result-level { color: var(--text); font-weight: 500; margin: 8px 0 0; }
 .practice-result .correction { color: var(--text); font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 
+/* Strikethrough animation for incorrect feedback */
+.strikethrough-word {
+  position: relative;
+  display: inline-block;
+}
+
+.strikethrough-word::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0%;
+  height: 1px;
+  background: var(--error);
+  transform: translateY(-50%);
+  animation: drawStrike .45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes drawStrike {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.correction-text {
+  opacity: 0;
+  animation: fadeInSuggest .4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: .35s;
+  color: var(--success);
+  font-weight: 500;
+}
+
+@keyframes fadeInSuggest {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .strikethrough-word::after { animation: none; }
+  .strikethrough-word::after { display: none; }
+  .correction-text { animation: none; opacity: 1; }
+}
+
 @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
 .reveal {

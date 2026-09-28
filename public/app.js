@@ -241,7 +241,30 @@ $('#practice-form').addEventListener('submit', async (e) => {
     level.textContent = `Complexidade: ${review.complexity}`;
 
     if (!review.correct && review.correction) {
-      correction.textContent = review.correction;
+      // Create animated correction with strikethrough and fade-in
+      const userSentence = input.value.trim();
+      const corrected = review.correction.trim();
+
+      // Simple word-by-word comparison to find the incorrect word
+      const userWords = userSentence.toLowerCase().split(/\s+/);
+      const correctedWords = corrected.toLowerCase().split(/\s+/);
+
+      let html = '';
+      const words = corrected.split(/\s+/);
+      words.forEach((word, i) => {
+        const userWord = userWords[i];
+        const isWrong = userWord && userWord !== word.toLowerCase();
+
+        if (isWrong) {
+          // Incorrect word with strikethrough
+          html += `<span class="strikethrough-word">${esc(userWord)}</span> <span class="correction-text">${esc(word)}</span>`;
+        } else {
+          html += `<span class="correction-text">${esc(word)}</span>`;
+        }
+        if (i < words.length - 1) html += ' ';
+      });
+
+      correction.innerHTML = html;
       correction.classList.remove('hidden');
     } else {
       correction.classList.add('hidden');
