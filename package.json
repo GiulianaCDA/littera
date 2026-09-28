@@ -1,0 +1,13 @@
+{
+  "name": "littera",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Estude inglês através de cartas romanas. Repetição espaçada elegante.",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-sqlite --no-warnings server.mjs"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
