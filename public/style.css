@@ -198,6 +198,40 @@ main { width: 100%; max-width: 720px; flex: 1; }
 .practice-submit-btn:disabled { opacity: .5; cursor: progress; }
 .practice-submit-btn.loading { animation: spin .8s linear infinite; }
 
+/* Practice input feedback states (Duolingo-style) */
+.practice-input-group.correct #practice-input {
+  border-bottom-color: var(--success);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.practice-input-group.incorrect #practice-input {
+  border-bottom-color: var(--error);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.practice-feedback-icon {
+  display: none;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  animation: popIn .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.practice-feedback-icon.correct {
+  display: block;
+  color: var(--success);
+}
+
+.practice-feedback-icon.incorrect {
+  display: block;
+  color: var(--error);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 @media (max-width: 380px) {
   .practice-submit-btn { width: 36px; height: 36px; }
 }

@@ -21,6 +21,37 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
+/* Success sound (Web Audio API) */
+function playSuccessSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+
+    // Two ascending tones (dingding effect)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.frequency.value = 800;
+    gain1.gain.setValueAtTime(0.3, now);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+    osc1.start(now);
+    osc1.stop(now + 0.15);
+
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.frequency.value = 1200;
+    gain2.gain.setValueAtTime(0.3, now + 0.1);
+    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+    osc2.start(now + 0.1);
+    osc2.stop(now + 0.25);
+  } catch (e) {
+    // Silently fail if audio context unavailable
+  }
+}
+
 /* ---------------- voz (Web Speech API, nativa do navegador) ---------------- */
 const tts = {
   voz: null,
@@ -202,14 +233,27 @@ function showPracticeCard() {
   $('#practice-front').textContent = practiceCard.front;
   $('#practice-count').textContent = `${practiceIndex} / ${practiceCards.length}`;
   $('#practice-input').value = '';
+  // Reset input feedback
+  const inputGroup = $('#practice-input').parentElement;
+  inputGroup.classList.remove('correct', 'incorrect');
+  $('#practice-feedback-icon').classList.remove('correct', 'incorrect');
+  $('#feedback-check').style.display = 'none';
+  $('#feedback-x').style.display = 'none';
   $('#practice-result').className = 'practice-result hidden';
   $('#practice-loading').classList.remove('hidden');
   $('#practice-feedback').classList.add('hidden');
   $('#practice-next').classList.add('hidden');
+  $('#practice-skip').classList.add('hidden');
+  $('#practice-skip-top').classList.add('hidden');
   $('#practice-submit').classList.remove('hidden');
   $('#practice-input').disabled = false;
   $('#practice-input').focus();
 }
+
+// Enable/disable submit button based on input content
+$('#practice-input').addEventListener('input', (e) => {
+  $('#practice-submit').disabled = e.target.value.trim().length === 0;
+});
 
 $('#practice-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -231,6 +275,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
   errorDiv.textContent = '';
   $('#practice-next').classList.add('hidden');
   $('#practice-skip').classList.add('hidden');
+  $('#practice-skip-top').classList.add('hidden');
 
   try {
     const review = await api('/api/practice/evaluate', {
@@ -244,12 +289,31 @@ $('#practice-form').addEventListener('submit', async (e) => {
     const level = $('#result-level');
     const correction = $('#result-correction');
 
+    // Input feedback (Duolingo-style)
+    const inputGroup = input.parentElement;
+    const feedbackIcon = $('#practice-feedback-icon');
+    const feedbackCheck = $('#feedback-check');
+    const feedbackX = $('#feedback-x');
+
     if (review.correct) {
       icon.textContent = '';
       status.textContent = 'Correta!';
+      inputGroup.classList.add('correct');
+      inputGroup.classList.remove('incorrect');
+      feedbackIcon.classList.add('correct');
+      feedbackIcon.classList.remove('incorrect');
+      feedbackCheck.style.display = 'block';
+      feedbackX.style.display = 'none';
+      playSuccessSound();
     } else {
       icon.textContent = '';
       status.textContent = 'Precisa de ajuste';
+      inputGroup.classList.add('incorrect');
+      inputGroup.classList.remove('correct');
+      feedbackIcon.classList.add('incorrect');
+      feedbackIcon.classList.remove('correct');
+      feedbackCheck.style.display = 'none';
+      feedbackX.style.display = 'block';
     }
 
     level.textContent = `Complexidade: ${review.complexity}`;
@@ -290,6 +354,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
     button.classList.add('hidden');
     $('#practice-next').classList.remove('hidden');
     $('#practice-skip').classList.remove('hidden');
+    $('#practice-skip-top').classList.remove('hidden');
   } catch (err) {
     loading.classList.add('hidden');
     errorDiv.classList.remove('hidden');
@@ -297,6 +362,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
     result.className = 'practice-result incorrect';
     feedback.classList.add('hidden');
     $('#practice-skip').classList.remove('hidden');
+    $('#practice-skip-top').classList.remove('hidden');
   } finally {
     button.disabled = false;
     button.classList.remove('loading');
@@ -304,6 +370,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
 });
 $('#practice-next').addEventListener('click', showPracticeCard);
 $('#practice-skip').addEventListener('click', showPracticeCard);
+$('#practice-skip-top').addEventListener('click', showPracticeCard);
 
 document.addEventListener('keydown', (e) => {
   if (view !== 'study' || e.target.matches('input, textarea')) return;
