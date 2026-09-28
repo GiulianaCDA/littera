@@ -231,10 +231,10 @@ $('#practice-form').addEventListener('submit', async (e) => {
     const correction = $('#result-correction');
 
     if (review.correct) {
-      icon.textContent = '✓';
+      icon.textContent = '';
       status.textContent = 'Correta!';
     } else {
-      icon.textContent = '⚠';
+      icon.textContent = '';
       status.textContent = 'Precisa de ajuste';
     }
 
