@@ -244,7 +244,7 @@ function showPracticeCard() {
   $('#practice-feedback').classList.add('hidden');
   $('#practice-next').classList.add('hidden');
   $('#practice-skip').classList.add('hidden');
-  $('#practice-skip-top').classList.add('hidden');
+  $('#practice-skip-top').classList.remove('hidden');
   $('#practice-submit').classList.remove('hidden');
   $('#practice-input').disabled = false;
   $('#practice-input').focus();

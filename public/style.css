@@ -100,7 +100,7 @@ nav { display: flex; gap: 2px; margin-right: auto; }
 /* Badges com estado */
 #b-due { color: var(--text); border-color: var(--muted); }
 #b-due.warm { color: var(--warning); border-color: var(--warning); background: var(--surface-2); font-weight: 600; }
-#b-due.hot { color: var(--error); border-color: var(--error); background: var(--surface-2); font-weight: 700; }
+#b-due.hot { color: #f97316; border-color: #f97316; background: var(--surface-2); font-weight: 600; }
 
 /* ---------- layout ---------- */
 main { width: 100%; max-width: 720px; flex: 1; }
