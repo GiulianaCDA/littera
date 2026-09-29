@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Littera</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.l { fill: none; stroke: %23a3e635; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }</style><line class='l' x1='25' y1='20' x2='25' y2='80'/><line class='l' x1='25' y1='80' x2='70' y2='80'/></svg>">
+</head>
+<body>
+
+<header>
+  <h1><span class="logo-letter">L</span>ittera</h1>
+  <nav>
+    <button class="tab active" data-view="study">Estudar</button>
+    <button class="tab" data-view="practice">Praticar</button>
+    <button class="tab" data-view="cards">Cartões</button>
+    <button class="tab" data-view="add">Adicionar</button>
+  </nav>
+  <div id="badges">
+    <span class="badge" id="b-due" title="Cartões para revisar agora">
+      <span id="b-due-text">—</span>
+    </span>
+    <span class="badge" id="b-today" title="Revisões feitas hoje">
+      <span id="b-today-text">—</span>
+    </span>
+    <span class="badge" id="b-streak" title="Dias seguidos estudando">
+      <span id="b-streak-text">—</span>
+    </span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ---------- ESTUDAR ---------- -->
+  <section id="view-study" class="view active">
+    <div id="card" class="card hidden">
+      <div class="card-meta">
+        <span id="card-tag" class="tag"></span>
+        <span id="card-reps" class="muted"></span>
+      </div>
+      <div id="front" class="front"></div>
+      <div class="pron">
+        <button id="speak" class="speak" title="Ouvir a pronúncia (tecla P)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+        </button>
+        <span id="ipa" class="ipa"></span>
+      </div>
+      <div id="answer" class="answer hidden">
+        <div id="back" class="back"></div>
+        <div id="example" class="example"></div>
+      </div>
+      <button id="reveal" class="reveal">Mostrar resposta <kbd>espaço</kbd></button>
+      <div id="grades" class="grades hidden">
+        <button class="grade g0" data-grade="0" title="Errei (1)">
+          <span>Errei</span>
+        </button>
+        <button class="grade g1" data-grade="1" title="Difícil (2)">
+          <span>Difícil</span>
+        </button>
+        <button class="grade g2" data-grade="2" title="Bom (3)">
+          <span>Bom</span>
+        </button>
+        <button class="grade g3" data-grade="3" title="Fácil (4)">
+          <span>Fácil</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="empty" class="empty hidden">
+      <h2>Fila vazia</h2>
+      <p>Nada para revisar agora. Volte mais tarde ou adicione cartões novos.</p>
+      <div id="empty-stats" class="stat-grid"></div>
+    </div>
+  </section>
+
+  <!-- ---------- PRATICAR ---------- -->
+  <section id="view-practice" class="view">
+    <div class="card practice-card">
+      <div class="card-meta"><span class="tag">Escreva uma frase</span><button id="practice-skip-top" class="reveal hidden" type="button" style="padding: 8px 12px; font-size: 13px; align-self: auto;">Pular</button></div>
+      <div id="practice-front" class="front"></div>
+      <form id="practice-form" class="practice-form">
+        <label for="practice-input">Sua frase em inglês</label>
+        <div class="practice-input-group">
+          <input id="practice-input" type="text" maxlength="1000" placeholder="Write your own sentence using this expression…" autocomplete="off" required>
+          <button id="practice-submit" class="practice-submit-btn" type="submit" title="Avaliar frase (Enter)" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+          <!-- Feedback icon (check or X) -->
+          <div id="practice-feedback-icon" class="practice-feedback-icon">
+            <svg id="feedback-check" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <svg id="feedback-x" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+      </form>
+      <div id="practice-result" class="practice-result hidden" aria-live="polite">
+        <div id="practice-loading" class="loading-dots hidden">
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span style="margin-left: 8px; color: var(--muted);">Avaliando...</span>
+        </div>
+        <div id="practice-error" class="hidden" style="color: var(--error); margin-top: 12px;"></div>
+        <div id="practice-feedback" class="hidden">
+          <div class="result-header">
+            <span id="result-icon" class="result-icon"></span>
+            <strong id="result-status"></strong>
+          </div>
+          <p id="result-level"></p>
+          <p id="result-correction" class="correction hidden"></p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 18px;">
+        <button id="practice-next" class="reveal hidden" type="button">Próxima palavra</button>
+        <button id="practice-skip" class="reveal hidden" type="button" title="Pular este termo (tecla S)">Pular</button>
+      </div>
+    </div>
+    <div id="practice-empty" class="empty hidden"><h2>Nenhum cartão disponível</h2><p>Adicione cartões para começar a praticar.</p></div>
+  </section>
+
+  <!-- ---------- CARTÕES ---------- -->
+  <section id="view-cards" class="view">
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Buscar palavra, significado ou categoria…" autocomplete="off">
+      <button id="fetch-ipa" title="Busca a transcrição fonética no dicionário para os cartões que ainda não têm">Buscar IPA</button>
+      <button id="test-voice" title="Verifica quais vozes em inglês o seu navegador tem e fala uma frase de teste">Testar voz</button>
+    </div>
+    <div id="list" class="list"></div>
+  </section>
+
+  <!-- ---------- ADICIONAR ---------- -->
+  <section id="view-add" class="view">
+    <form id="form-one" class="panel">
+      <h2>Novo cartão</h2>
+      <label>Inglês <span class="req">*</span>
+        <input name="front" required placeholder="to look forward to" autocomplete="off">
+      </label>
+      <label>Português <span class="req">*</span>
+        <input name="back" required placeholder="aguardar com expectativa" autocomplete="off">
+      </label>
+      <label>Frase de exemplo
+        <input name="example" placeholder="I'm looking forward to your reply." autocomplete="off">
+      </label>
+      <label>Categoria
+        <input name="tag" placeholder="phrasal verb" autocomplete="off">
+      </label>
+      <label>Pronúncia (opcional — deixe vazio para buscar automaticamente)
+        <input name="ipa" placeholder="/ˌlʊk ˈfɔːwəd tuː/" autocomplete="off">
+      </label>
+      <button type="submit" class="primary">Adicionar</button>
+    </form>
+
+    <form id="form-bulk" class="panel">
+      <h2>Importar em lote</h2>
+      <p class="muted">Uma por linha, separando com <code>|</code> — <code>inglês | português | exemplo</code></p>
+      <textarea name="text" rows="7" placeholder="reliable | confiável | She is a reliable teammate.&#10;awkward | estranho, sem jeito&#10;to figure out | descobrir, sacar"></textarea>
+      <label>Categoria para todas
+        <input name="tag" placeholder="vocabulário" autocomplete="off">
+      </label>
+      <button type="submit">Importar</button>
+    </form>
+  </section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>
