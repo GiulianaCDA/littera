@@ -1,4 +1,4 @@
-# english-srs
+# littera
 
 Aplicação de repetição espaçada para treinar inglês. **Zero dependências** — usa só o que vem no Node 22.
 
@@ -7,7 +7,7 @@ Aplicação de repetição espaçada para treinar inglês. **Zero dependências*
 Clique duas vezes em `start.cmd`, ou no terminal:
 
 ```
-cd english-srs
+cd littera
 npm start
 ```
 
