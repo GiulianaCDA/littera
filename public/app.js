@@ -118,13 +118,6 @@ let view = 'study';
 let allCards = [];          // cache de todos os cartões (lista, duplicatas, categorias)
 const dialogOpen = () => !!document.querySelector('dialog[open]');
 
-const STAGE = {
-  new: 'Novo',
-  learning: 'Aprendendo',
-  review: 'Revisão',
-};
-const stageChip = (stage) => `<span class="stage stage-${stage}">${STAGE[stage] || ''}</span>`;
-
 // categoria padronizada na exibição: "phrasal verb" -> "Phrasal verb"
 const catLabel = (t) => (t ? t.charAt(0).toUpperCase() + t.slice(1) : '');
 
@@ -173,7 +166,7 @@ function renderStats(s) {
   lastStats = s;
   $('#b-due-text').textContent = `${s.due} para revisar`;
   $('#b-today-text').textContent = `${s.today} ${s.today === 1 ? 'revisado' : 'revisados'} hoje`;
-  $('#b-streak-text').textContent = `🔥 ${plural(s.streak, 'dia', 'dias')}`;
+  $('#b-streak-text').textContent = `${plural(s.streak, 'dia', 'dias')} seguidos`;
 
   // verde = fila normal; laranja/vermelho só quando o acúmulo vira alerta
   const badgeDue = $('#b-due');
@@ -213,7 +206,6 @@ let queue = [];
 let current = null;
 let revealed = false;
 let studyActive = false;
-let reverse = pref.get('reverse', '0') === '1';
 let session = { done: 0, total: 0, missed: 0 };
 
 async function loadQueue({ keepSession = false } = {}) {
@@ -269,34 +261,15 @@ function next() {
   $('#study-done').classList.add('hidden');
   $('#study-bar').classList.remove('hidden');
 
-  // frente/verso conforme a direção escolhida
-  const en = current.front;
-  const pt = current.back;
-  $('#front').textContent = reverse ? pt : en;
-  $('#front').lang = reverse ? 'pt-BR' : 'en';
-  $('#back').textContent = reverse ? en : pt;
-  $('#back').lang = reverse ? 'en' : 'pt-BR';
-  $('#example').innerHTML = highlightTarget(current.example || '', en);
+  $('#front').textContent = current.front;
+  $('#back').textContent = current.back;
+  $('#example').innerHTML = highlightTarget(current.example || '', current.front);
   $('#example-row').classList.toggle('hidden', !current.example);
-  $('#card-tag').textContent = catLabel(current.tag);
-  $('#card-stage').className = `stage stage-${current.stage}`;
-  $('#card-stage').textContent = STAGE[current.stage];
-  $('#card-stage').title =
-    current.stage === 'new' ? 'Você ainda não revisou este cartão'
-    : current.stage === 'learning' ? 'Em memorização: os intervalos ainda são curtos (menos de 21 dias)'
-    : 'Consolidado: intervalos longos (21 dias ou mais)';
   $('#ipa').textContent = current.ipa && current.ipa !== '—' ? current.ipa : '';
-
-  // no modo PT → EN a pronúncia só aparece junto da resposta em inglês
-  const pron = $('#pron');
-  if (reverse) $('#answer').insertBefore(pron, $('#example-row'));
-  else $('#card').insertBefore(pron, $('#answer'));
 
   $('#answer').classList.add('hidden');
   $('#grades').classList.add('hidden');
-  $('#grades-hint').classList.add('hidden');
   $('#reveal').classList.remove('hidden');
-  $('#reveal').focus({ preventScroll: true });
 
   $$('.grade').forEach((btn, i) => {
     const label = current.previews[i];
@@ -347,7 +320,6 @@ function reveal() {
   $('#answer').classList.remove('hidden');
   $('#reveal').classList.add('hidden');
   $('#grades').classList.remove('hidden');
-  $('#grades-hint').classList.remove('hidden');
   tts.falar(current.front, $('#speak'), { expr: true }); // ouve a pronúncia junto com a resposta
 }
 
@@ -381,21 +353,6 @@ $('#reveal').addEventListener('click', reveal);
 $$('.grade').forEach((b) => b.addEventListener('click', () => grade(+b.dataset.grade)));
 $('#study-more').addEventListener('click', () => loadQueue());
 
-function setDirection(rev) {
-  reverse = rev;
-  pref.set('reverse', rev ? '1' : '0');
-  $('#dir-fwd').setAttribute('aria-pressed', !rev);
-  $('#dir-rev').setAttribute('aria-pressed', rev);
-  if (current) {
-    // re-renderiza o cartão atual na nova direção (sem consumir da fila)
-    queue.unshift(current);
-    next();
-  }
-}
-$('#dir-fwd').addEventListener('click', () => setDirection(false));
-$('#dir-rev').addEventListener('click', () => setDirection(true));
-setDirection(reverse);
-
 document.addEventListener('keydown', (e) => {
   if (view !== 'study' || dialogOpen() || e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.target.matches('input, textarea, select')) return;
@@ -425,29 +382,17 @@ let pCard = null;
 let pState = 'idle'; // idle | evaluating | result | error
 let pToken = 0;      // descarta respostas de avaliações antigas
 
-const IDEAS = [
-  'Escreva sobre o seu trabalho ou estudos.',
-  'Escreva sobre o que você fez ontem.',
-  'Escreva sobre um plano para o fim de semana.',
-  'Escreva sobre alguém da sua família ou um amigo.',
-  'Escreva sobre a última viagem ou passeio que você fez.',
-  'Escreva sobre um problema que você resolveu recentemente.',
-  'Escreva sobre algo que você quer aprender ou conquistar.',
-  'Escreva sobre a sua rotina de manhã.',
-];
-let ideaIdx = Math.floor(Math.random() * IDEAS.length);
-
 const VERDICT = {
   correct: {
-    label: 'Correta', cls: 'ok', sub: 'Frase completa, com a expressão bem usada.',
+    label: 'Correta', cls: 'ok',
     svg: '<polyline points="20 6 9 17 4 12"/>',
   },
   almost: {
-    label: 'Quase lá', cls: 'warn', sub: 'Você está perto: falta só um ajuste.',
+    label: 'Quase lá', cls: 'warn',
     svg: '<line x1="12" y1="6" x2="12" y2="13"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
   },
   incorrect: {
-    label: 'Precisa de ajuste', cls: 'bad', sub: 'Vamos ajustar isto antes de seguir.',
+    label: 'Precisa de ajuste', cls: 'bad',
     svg: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   },
 };
@@ -530,7 +475,6 @@ function setLocked(locked) {
   const input = $('#practice-input');
   input.readOnly = locked;
   $('#practice-input-group').classList.toggle('locked', locked);
-  $('#practice-lock').classList.toggle('hidden', !locked);
 }
 
 function resetResultUI() {
@@ -570,45 +514,9 @@ function showPracticeCard() {
   setLocked(false);
   resetResultUI();
 
-  // ajudas sob demanda
-  $('#practice-meaning').classList.add('hidden');
-  $('#practice-meaning-btn').textContent = 'Ver significado';
-  $('#practice-meaning-btn').setAttribute('aria-expanded', 'false');
-  $('#practice-idea').classList.add('hidden');
-  $('#practice-idea-btn').setAttribute('aria-expanded', 'false');
-  $('#practice-meaning-back').textContent = pCard.back;
-  $('#practice-meaning-example').innerHTML = pCard.example
-    ? `<em>${highlightTarget(pCard.example, pCard.front)}</em>`
-    : '';
-
   setPracticeButtons('idle');
   $('#practice-input').focus();
 }
-
-$('#practice-meaning-btn').addEventListener('click', () => {
-  const box = $('#practice-meaning');
-  const open = box.classList.toggle('hidden') === false;
-  $('#practice-meaning-btn').textContent = open ? 'Ocultar significado' : 'Ver significado';
-  $('#practice-meaning-btn').setAttribute('aria-expanded', open);
-});
-
-function renderIdea() {
-  $('#practice-idea').innerHTML =
-    `<span>${esc(IDEAS[ideaIdx])}</span> <button type="button" class="link-btn" id="practice-idea-next">Outra ideia</button>`;
-}
-$('#practice-idea-btn').addEventListener('click', () => {
-  const box = $('#practice-idea');
-  const open = box.classList.contains('hidden');
-  if (open) renderIdea();
-  box.classList.toggle('hidden', !open);
-  $('#practice-idea-btn').setAttribute('aria-expanded', open);
-});
-$('#practice-idea').addEventListener('click', (e) => {
-  if (!e.target.closest('#practice-idea-next')) return;
-  ideaIdx = (ideaIdx + 1) % IDEAS.length;
-  renderIdea();
-  $('#practice-idea-next').focus();
-});
 
 $('#practice-input').addEventListener('input', () => {
   if (pState === 'idle' || pState === 'error') setPracticeButtons(pState);
@@ -645,9 +553,7 @@ function feedbackHTML(r, sentence) {
       <div class="verdict-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${v.svg}</svg></div>
       <div class="verdict-body">
         <h3 class="verdict-title" tabindex="-1">${v.label}</h3>
-        <p class="verdict-sub">${v.sub}</p>
         ${issues}${corrected}${alt}${tip}
-        <p class="sched-note hidden" id="sched-note"></p>
       </div>
     </div>`;
 }
@@ -696,16 +602,7 @@ $('#practice-form').addEventListener('submit', async (e) => {
 
     // o veredito antecipa a revisão do cartão (só puxa para mais cedo, nunca adia)
     api(`/api/cards/${card.id}/practice`, { method: 'POST', body: { verdict: r.verdict } })
-      .then(({ rescheduled, stats }) => {
-        renderStats(stats);
-        const note = $('#sched-note');
-        if (note && rescheduled && token === pToken) {
-          note.textContent = r.verdict === 'incorrect'
-            ? 'Este cartão volta para a fila de revisão em 10 minutos.'
-            : 'Este cartão volta para a fila de revisão em até 1 dia.';
-          note.classList.remove('hidden');
-        }
-      })
+      .then(({ stats }) => renderStats(stats))
       .catch(() => { /* o feedback já foi mostrado; o reagendamento é um extra */ });
   } catch (err) {
     if (token !== pToken) return;
@@ -820,9 +717,6 @@ function visibleCards() {
   let cards = allCards.filter((c) => !pendingDelete.has(c.id));
   if (q) cards = cards.filter((c) => `${c.front} ${c.back} ${c.tag}`.toLowerCase().includes(q));
   if (listState.tag) cards = cards.filter((c) => c.tag === listState.tag);
-  const f = listState.filter;
-  if (f === 'due') cards = cards.filter((c) => c.due <= now);
-  else if (f !== 'all') cards = cards.filter((c) => c.stage === f);
   if (listState.sort === 'az') cards.sort((a, b) => a.front.replace(/^to\s+/i, '').localeCompare(b.front.replace(/^to\s+/i, ''), 'en'));
   else if (listState.sort === 'due') cards.sort((a, b) => a.due - b.due);
   else cards.sort((a, b) => b.created - a.created);
@@ -847,7 +741,7 @@ function renderList() {
             <span class="row-main">
               <span class="row-en">${esc(c.front)}</span>
               <span class="row-pt">${esc(c.back)}</span>
-              <span class="row-tags">${c.tag ? `<span class="cat">${esc(catLabel(c.tag))}</span>` : ''}${stageChip(c.stage)}${c.ipa && c.ipa !== '—' ? `<span class="row-ipa">${esc(c.ipa)}</span>` : ''}</span>
+              <span class="row-tags">${c.tag ? `<span class="cat">${esc(catLabel(c.tag))}</span>` : ''}${c.ipa && c.ipa !== '—' ? `<span class="row-ipa">${esc(c.ipa)}</span>` : ''}</span>
             </span>
             <span class="row-due ${c.due <= now ? 'now' : ''}">${dueLabel(c.due)}</span>
             <svg class="row-edit" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
@@ -866,15 +760,7 @@ $('#search').addEventListener('input', (e) => {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => { listState.q = e.target.value.trim(); renderList(); }, 120);
 });
-$('#stage-filters').addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  listState.filter = chip.dataset.filter;
-  $$('#stage-filters .chip').forEach((c) => c.setAttribute('aria-pressed', c === chip));
-  renderList();
-});
 $('#filter-tag').addEventListener('change', (e) => { listState.tag = e.target.value; renderList(); });
-$('#sort').addEventListener('change', (e) => { listState.sort = e.target.value; renderList(); });
 
 /* ---- menu de ações ---- */
 let menuFor = null; // { id, btn }
@@ -1071,21 +957,6 @@ const findDuplicate = (front) => {
   return k ? allCards.find((c) => dupKey(c.front) === k) : null;
 };
 
-function renderMiniCard() {
-  const f = formOne;
-  const front = f.front.value.trim();
-  const back = f.back.value.trim();
-  const ex = f.example.value.trim();
-  const tag = f.tag.value.trim();
-  const ipa = f.ipa.value.trim();
-  $('#mini-card').innerHTML = `
-    <div class="mini-meta">${tag ? `<span class="cat">${esc(catLabel(tag))}</span>` : '<span class="mini-ph">sem categoria</span>'}<span class="stage stage-new">Novo</span></div>
-    <div class="mini-front ${front ? '' : 'mini-ph'}" lang="en">${esc(front || 'Expressão em inglês')}</div>
-    ${ipa ? `<div class="mini-ipa">${esc(ipa)}</div>` : ''}
-    <div class="mini-back ${back ? '' : 'mini-ph'}">${esc(back || 'Significado em português')}</div>
-    ${ex ? `<div class="mini-ex" lang="en">${highlightTarget(ex, front)}</div>` : ''}`;
-}
-
 function checkDuplicate() {
   const dup = findDuplicate(formOne.front.value);
   const w = $('#dup-warning');
@@ -1094,7 +965,7 @@ function checkDuplicate() {
   $('#add-submit').textContent = dup ? 'Adicionar mesmo assim' : 'Adicionar cartão';
 }
 
-formOne.addEventListener('input', () => { checkDuplicate(); renderMiniCard(); });
+formOne.addEventListener('input', checkDuplicate);
 
 formOne.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -1113,7 +984,6 @@ formOne.addEventListener('submit', async (e) => {
     formOne.reset();
     formOne.tag.value = tag;
     checkDuplicate();
-    renderMiniCard();
     formOne.front.focus();
     toast(`“${card.front}” adicionado`, {
       action: 'Ver na lista',
@@ -1169,7 +1039,7 @@ function renderBulkPreview() {
 
   const shown = bulkRows.slice(0, 40);
   box.innerHTML = `
-    <p class="bulk-summary"><span class="ok">${ok} pronto${ok === 1 ? '' : 's'}</span>${dup ? ` · <span class="dup">${plural(dup, 'duplicado', 'duplicados')} (serão ignorados)</span>` : ''}${bad ? ` · <span class="bad">${plural(bad, 'inválida', 'inválidas')} (serão ignoradas)</span>` : ''}</p>
+    <p class="bulk-summary"><span class="ok">${ok} pronto${ok === 1 ? '' : 's'}</span>${dup ? ` · <span class="dup">${plural(dup, 'duplicado', 'duplicados')} (ignorados)</span>` : ''}${bad ? ` · <span class="bad">${plural(bad, 'inválida', 'inválidas')} ()</span>` : ''}</p>
     <ul class="bulk-list">${shown
       .map((r) => `<li class="bulk-${r.status}"><span class="bulk-badge">${BULK_LABEL[r.status]}</span>
         <span class="bulk-text"><span lang="en">${esc(r.front) || '—'}</span> <span class="arrow" aria-hidden="true">→</span> ${esc(r.back) || '—'}${r.note ? `<small>linha ${r.n}: ${r.note}</small>` : ''}</span></li>`)
@@ -1203,50 +1073,11 @@ formBulk.addEventListener('submit', async (e) => {
   }
 });
 
-/* ================================================================
-   CONFIGURAÇÕES
-   ================================================================ */
-const settingsDlg = $('#settings-dialog');
-closeDialogOnBackdrop(settingsDlg);
-$('#open-settings').addEventListener('click', () => settingsDlg.showModal());
-$('#settings-close').addEventListener('click', () => settingsDlg.close());
-
-$('#test-voice').addEventListener('click', () => {
-  if (!('speechSynthesis' in window))
-    return toast('Este navegador não expõe síntese de voz');
-  tts.escolher();
-  const todas = speechSynthesis.getVoices();
-  const en = todas.filter((v) => /^en([-_]|$)/i.test(v.lang));
-  console.log('[srs] vozes disponíveis:', todas.map((v) => `${v.name} (${v.lang})`));
-  if (!en.length) {
-    toast(`Nenhuma voz em inglês. ${todas.length} vozes no total — veja o console (F12).`);
-    return;
-  }
-  toast(`${en.length} voz(es) em inglês. Usando: ${tts.voz.name}`);
-  tts.falar('Hello. This is a pronunciation test.');
-});
-
-$('#fetch-ipa').addEventListener('click', async (e) => {
-  const btn = e.currentTarget;
-  btn.disabled = true;
-  btn.textContent = 'Buscando…';
-  try {
-    const r = await api('/api/pronuncia', { method: 'POST' });
-    toast(
-      r.verificados === 0
-        ? 'Todos os cartões já foram verificados'
-        : `${r.achou} de ${r.verificados} com transcrição`
-    );
-    loadCards();
-  } catch (err) {
-    toast(err.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Buscar IPA de todos os cartões';
-  }
+document.addEventListener('click', (e) => {
+  const go = e.target.closest('[data-goto]');
+  if (go) switchView(go.dataset.goto);
 });
 
 /* ---------------- início ---------------- */
-renderMiniCard();
 loadCards();   // cache para duplicatas, categorias e lista
 loadQueue();

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0d">
 <title>Littera</title>
 <link rel="stylesheet" href="/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.l { fill: none; stroke: %23a3e635; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }</style><line class='l' x1='25' y1='20' x2='25' y2='80'/><line class='l' x1='25' y1='80' x2='70' y2='80'/></svg>">
@@ -19,9 +20,6 @@
     <button class="tab" role="tab" id="tab-cards" aria-selected="false" aria-controls="view-cards" data-view="cards" tabindex="-1" title="Ver, buscar e editar seus cartões">Cartões</button>
     <button class="tab" role="tab" id="tab-add" aria-selected="false" aria-controls="view-add" data-view="add" tabindex="-1" title="Criar cartões novos">Adicionar</button>
   </nav>
-  <button id="open-settings" class="icon-only" type="button" aria-label="Configurações e ferramentas" title="Configurações e ferramentas">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-  </button>
   <div id="badges" aria-label="Resumo de hoje">
     <span class="badge" id="b-due" tabindex="0" title="Cartões que já venceram e esperam revisão agora"><span id="b-due-text">—</span></span>
     <span class="badge" id="b-today" tabindex="0" title="Revisões feitas hoje na aba Estudar"><span id="b-today-text">—</span></span>
@@ -33,24 +31,15 @@
 
   <!-- ---------- ESTUDAR ---------- -->
   <section id="view-study" class="view active" role="tabpanel" aria-labelledby="tab-study">
-    <p class="view-desc"><strong>Revisar:</strong> veja a expressão, tente lembrar o significado e diga ao sistema como foi. Ele decide quando o cartão volta.</p>
 
     <div id="study-bar" class="study-bar hidden">
       <div class="progress-wrap">
         <div class="progress-label"><span id="study-progress-text">0 de 0</span></div>
         <div class="progress" role="progressbar" aria-label="Progresso da sessão" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="study-progress-fill"></span></div>
       </div>
-      <div class="segmented" role="group" aria-label="Direção do cartão">
-        <button type="button" id="dir-fwd" aria-pressed="true" title="Ver o inglês e lembrar o português">EN → PT</button>
-        <button type="button" id="dir-rev" aria-pressed="false" title="Ver o português e lembrar o inglês">PT → EN</button>
-      </div>
     </div>
 
     <div id="card" class="card hidden">
-      <div class="card-meta">
-        <span id="card-tag" class="tag"></span>
-        <span id="card-stage" class="stage"></span>
-      </div>
       <div id="front" class="front"></div>
       <div class="pron" id="pron">
         <button id="speak" class="speak" type="button" aria-label="Ouvir a pronúncia" title="Ouvir a pronúncia (tecla P)">
@@ -74,17 +63,16 @@
         <button class="grade g2" type="button" data-grade="2" aria-keyshortcuts="3"><span class="g-name">Bom</span><span class="g-int"></span><kbd>3</kbd></button>
         <button class="grade g3" type="button" data-grade="3" aria-keyshortcuts="4"><span class="g-name">Fácil</span><span class="g-int"></span><kbd>4</kbd></button>
       </div>
-      <p id="grades-hint" class="hint hidden">Atalhos: <kbd>1</kbd>–<kbd>4</kbd> avaliam · <kbd>P</kbd> ouve a expressão · <kbd>E</kbd> ouve o exemplo · <kbd>espaço</kbd> = Bom</p>
     </div>
 
     <div id="empty" class="empty hidden">
       <h2>Fila vazia</h2>
       <p>Nada para revisar agora. Volte mais tarde, pratique escrevendo frases ou adicione cartões novos.</p>
+      <div class="empty-actions"><button type="button" class="primary-btn" data-goto="practice">Praticar escrevendo</button><button type="button" class="secondary-btn" data-goto="add">Adicionar cartões</button></div>
       <div id="empty-stats" class="stat-grid"></div>
     </div>
 
     <div id="study-done" class="empty hidden">
-      <div class="done-icon" aria-hidden="true">✓</div>
       <h2>Sessão concluída</h2>
       <p id="study-done-text"></p>
       <div id="study-done-stats" class="stat-grid"></div>
@@ -96,39 +84,23 @@
 
   <!-- ---------- PRATICAR ---------- -->
   <section id="view-practice" class="view" role="tabpanel" aria-labelledby="tab-practice">
-    <p class="view-desc"><strong>Produzir:</strong> escreva uma frase completa sua com a expressão. A IA corrige em inglês e explica em português.</p>
 
     <div id="practice-main" class="card practice-card">
       <div class="card-meta">
-        <span class="tag">Escreva uma frase</span>
+        
         <span id="practice-count" class="muted count" aria-live="polite" title="Cada sessão tem até 10 expressões. As que estão pendentes de revisão vêm primeiro."></span>
       </div>
       <div id="practice-front" class="front"></div>
 
-      <div class="help-row">
-        <button id="practice-meaning-btn" class="link-btn" type="button" aria-expanded="false" aria-controls="practice-meaning">Ver significado</button>
-        <button id="practice-idea-btn" class="link-btn" type="button" aria-expanded="false" aria-controls="practice-idea">Preciso de uma ideia</button>
-      </div>
-      <div id="practice-meaning" class="help-box hidden">
-        <div id="practice-meaning-back" class="help-back"></div>
-        <div id="practice-meaning-example" class="help-example"></div>
-      </div>
-      <div id="practice-idea" class="help-box hidden"></div>
-
       <form id="practice-form" class="practice-form" novalidate>
         <label for="practice-input">Sua frase em inglês</label>
-        <p id="practice-hint" class="hint-text">Escreva uma <strong>frase completa</strong> (sujeito + verbo conjugado), por exemplo: <em>“She achieved her goal last year.”</em></p>
         <div class="practice-input-group" id="practice-input-group">
-          <input id="practice-input" type="text" maxlength="1000" placeholder="She achieved her goal last year." autocomplete="off" spellcheck="false" aria-describedby="practice-hint practice-lock">
+          <input id="practice-input" type="text" maxlength="1000" placeholder="She achieved her goal last year." autocomplete="off" spellcheck="false">
           <button id="practice-submit" class="primary-btn" type="submit" disabled>
             Verificar
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>
           </button>
         </div>
-        <p id="practice-lock" class="lock-note hidden">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Frase enviada — o campo está bloqueado. Use “Tentar novamente” para editar.
-        </p>
       </form>
 
       <div id="practice-result" class="practice-result hidden" aria-live="polite">
@@ -156,7 +128,7 @@
       </div>
     </div>
 
-    <div id="practice-empty" class="empty hidden"><h2>Nenhum cartão disponível</h2><p>Adicione cartões para começar a praticar.</p></div>
+    <div id="practice-empty" class="empty hidden"><h2>Nenhum cartão disponível</h2><p>Adicione cartões para começar a praticar.</p><div class="empty-actions"><button type="button" class="primary-btn" data-goto="add">Adicionar cartões</button></div></div>
   </section>
 
   <!-- ---------- CARTÕES ---------- -->
@@ -165,23 +137,8 @@
       <input id="search" type="search" placeholder="Buscar palavra, significado ou categoria…" autocomplete="off" aria-label="Buscar cartões">
     </div>
     <div class="filters">
-      <div class="chips" id="stage-filters" role="group" aria-label="Filtrar por situação">
-        <button type="button" class="chip" data-filter="all" aria-pressed="true">Todos</button>
-        <button type="button" class="chip" data-filter="due" aria-pressed="false">Pendentes</button>
-        <button type="button" class="chip" data-filter="new" aria-pressed="false">Novos</button>
-        <button type="button" class="chip" data-filter="learning" aria-pressed="false">Aprendendo</button>
-        <button type="button" class="chip" data-filter="review" aria-pressed="false">Revisão</button>
-      </div>
-      <div class="selects">
-        <label class="select-label"><span class="sr-only">Categoria</span>
+        <div class="selects"><label class="select-label"><span class="sr-only">Categoria</span>
           <select id="filter-tag" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
-        </label>
-        <label class="select-label"><span class="sr-only">Ordenar por</span>
-          <select id="sort" aria-label="Ordenar por">
-            <option value="recent">Mais recentes</option>
-            <option value="az">A → Z</option>
-            <option value="due">Vencimento</option>
-          </select>
         </label>
       </div>
     </div>
@@ -193,29 +150,27 @@
   <section id="view-add" class="view" role="tabpanel" aria-labelledby="tab-add">
     <form id="form-one" class="panel" novalidate>
       <h2>Novo cartão</h2>
-      <label><span class="label-text">Inglês <span class="req" aria-hidden="true">*</span></span>
+      <div class="field-row">
+<label><span class="label-text">Inglês <span class="req" aria-hidden="true">*</span></span>
         <input name="front" required aria-required="true" placeholder="to look forward to" autocomplete="off">
         <span id="dup-warning" class="dup-warning hidden" role="status"></span>
       </label>
       <label><span class="label-text">Português <span class="req" aria-hidden="true">*</span></span>
         <input name="back" required aria-required="true" placeholder="aguardar com expectativa" autocomplete="off">
       </label>
+</div>
       <label><span class="label-text">Frase de exemplo</span>
         <input name="example" placeholder="I'm looking forward to your reply." autocomplete="off">
       </label>
-      <label><span class="label-text">Categoria</span>
+      <div class="field-row">
+<label><span class="label-text">Categoria</span>
         <input name="tag" list="tag-options" placeholder="Escolha uma existente ou digite uma nova" autocomplete="off">
       </label>
       <label><span class="label-text">Pronúncia (opcional)</span>
         <input name="ipa" placeholder="/ˌlʊk ˈfɔːwəd tuː/" autocomplete="off">
-        <span class="field-hint">Deixe vazio para buscar automaticamente depois, em Configurações.</span>
       </label>
+</div>
       <datalist id="tag-options"></datalist>
-
-      <div class="preview-block">
-        <span class="preview-title">Prévia do cartão</span>
-        <div class="mini-card" id="mini-card" aria-live="polite"></div>
-      </div>
 
       <button type="submit" class="primary-btn" id="add-submit">Adicionar cartão</button>
     </form>
@@ -275,27 +230,6 @@
       <button type="submit" class="primary-btn">Salvar</button>
     </div>
   </form>
-</dialog>
-
-<!-- configurações -->
-<dialog id="settings-dialog" aria-labelledby="settings-title">
-  <div class="dialog-body">
-    <h2 id="settings-title">Configurações e ferramentas</h2>
-    <section class="setting">
-      <h3>Pronúncia (IPA)</h3>
-      <p>Busca a transcrição fonética no dicionário para todos os cartões que ainda não têm.</p>
-      <button id="fetch-ipa" type="button" class="secondary-btn">Buscar IPA de todos os cartões</button>
-    </section>
-    <section class="setting">
-      <h3>Voz do navegador</h3>
-      <p>Verifica quais vozes em inglês o seu navegador tem e fala uma frase de teste.</p>
-      <button id="test-voice" type="button" class="secondary-btn">Testar voz</button>
-    </section>
-    <div class="dialog-actions">
-      <span class="spacer"></span>
-      <button type="button" id="settings-close" class="primary-btn">Fechar</button>
-    </div>
-  </div>
 </dialog>
 
 <div id="toast" class="toast" role="status" aria-live="polite">
